@@ -33,8 +33,8 @@ notifications:
 # set -e enabled in bash.
 before_script:
   - GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/) # All the .go files, excluding vendor/
-  - go get golang.org/x/lint                                    # Linter
-  - go get honnef.co/go/tools                                   # Badass static analyzer/linter
+  - go get golang.org/x/lint                        # Linter
+  - go get github.com/dominikh/go-tools                     # Badass static analyzer/linter
   - go get github.com/fzipp/gocyclo
 
 # script always run to completion (set +e). All of these code checks are must haves
