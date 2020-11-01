@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - CF Imager</title>
+    <script type="text/javascript" async defer src="../js/register.js"></script>
+    <script src="https://hcaptcha.com/1/api.js?hl=fr" async defer></script>
+</head>
+<body>
+<p>
+    See our privacy policy <a href="../privacy">here</a>.
+</p>
+<form id="form">
+    <label for="email">Email Address: </label>
+    <input id="email" type="email" required>
+    <label for="password">Password: </label>
+    <input id="password" type="password" minlength="8" required>
+    <label for="passwordRe">Repeat password: </label>
+    <input id ="passwordRe" type="password" minlength="8" required>
+    <div class="h-captcha" data-sitekey="{{sitekey}}" data-callback="hcaptcha_ok"></div>
+    <input type="submit" id="submit" value="Register" disabled>
+    <label id="error"></label>
+</form>
+Already have an account? <a href="../login">Login</a> instead.
+<script src="../argon2/argon2.js"></script>
+</body>
+</html>

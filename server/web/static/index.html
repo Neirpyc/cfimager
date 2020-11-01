@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> CF Imager - Home</title>
+    <script>
+        function logout() {
+            fetch('/v1/logout', {
+                method: 'POST',
+            })
+                .then(response => {
+                    window.location = "login"
+                })
+        }
+    </script>
+</head>
+<body>
+<a href="../list">Functions</a><br>
+<a href="javascript:logout()">Log out</a><br>
+<a href="../privacy">Privacy policy</a><br>
+<a href="../revoke">Log out of all devices</a><br>
+<a href="../passwordResetRequest">Reset your password</a><br>
+</body>
+</html>

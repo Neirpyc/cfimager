@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CF Imager - Privacy Policy</title>
+</head>
+<body>
+
+<h2>Cookies</h2>
+<p>
+    When you log in, 1 cookie will be used by CF Imager.
+</p>
+<p>
+    It allows us to authenticate you. It also allows us to track you, see the #Tracking section.
+</p>
+<h2>Passwords</h2>
+<p>
+    Any password typed into the password fields of the <a href="../login">login</a> and
+    <a href="../register">register</a> pages are immediately hashed before they are sent to the server. This means that
+    an attacker listening between you and our server could not see your password, but he'd still be to login as you,
+    only on our website (and not on other websites on which you share the same password).
+</p>
+<p>
+    Yet, you should try to use a unique password for every website you use.
+    This first hash is using the following function: <br/>
+    hashClient = argon2id(password=[password], salt="vXA2vPiUeWjSzlx1kLFM9VyRXfIbSoBnTqVMQ2jlM5e6VW5hDCRPZTPWP49EsUcO",
+    time=1, mem=16MB, hashLen=64, parallelism=1)
+</p>
+<p>
+    When you hashed password is received by the server, it is hashed another time, with a unique salt and compare to our
+    database. This way, even if an attacker had access to our database, he could not see your password, nor he could
+    log in as you.
+</p>
+<p>
+    The server-side hashing is the following:<br/>
+    hashServer = argon2id(password=[hashClient], salt=[unique salt for each user],
+    time=4, mem=128MB, hashLen=64, parallelism=8)
+</p>
+<h2>Security</h2>
+<p>
+    As of 2020's knowledge of cryptography and computing power, there is no way for an attacker to get your password,
+    even with access
+    to our database, if you password is strong enough. It is still a great idea to have a unique password for CF Imager.
+</p>
+<p>
+    Yet, it is plausible that an error on our side could allow someone to log to your account without your password.
+    This means your should not store any sensible data on your CF Imager account.
+</p>
+<h2>Mailing</h2>
+<p>
+    Your email address is used as a way to verify your identity. Getting access to your email address grants access to
+    your CF Imager account.
+</p>
+<p>
+    Your email can be used to warn you of security breaches, verify your identity or tell you about the
+    advancement of this project.
+</p>
+<p>
+    Your email will never be shared without your explicit consent.
+</p>
+<h2>Tracking</h2>
+<h3>As an anonymous user</h3>
+<p>
+    Every single time a file is requested from our server, we store the IP which asked for it, the error code if there
+    was one and the length of the file sent. This allows us to track you. But we are not doing so, this data is only
+    used for issue troubleshooting and bug fixing.
+</p>
+<h3>When logged in</h3>
+<p>
+    When you are logged in, a unique account ID is assigned to you. It is sent to the server for every single page
+    you browse on cfimager.neirpyc.ovh . This theoretically allows us to track every single actions you do.
+</p>
+<p>
+    Yet, we are only gathering data to improve our service, and they are never shared. We store your IP address,
+    the error code and the content length of every file you request from our server. In case an error occurs, the date,
+    and the full request body (we strip out passwords) is stored to our log files, so we can find the issue and fix it.
+</p>
+<p>
+    None of these data are automatically processed (they are just sorted by error kind).
+</p>
+<h2>Data access and rectification</h2>
+<p>
+    There is, so far, now way to automatically view, modify or erase your data. If you need to, you can get in touch at
+    contact@cfimager.neirpyc.ovh .
+</p>
+</body>
+</html>

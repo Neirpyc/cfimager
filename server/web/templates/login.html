@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - CF Imager</title>
+    <script type="text/javascript" async defer src="../js/login.js"></script>
+    <script src="https://hcaptcha.com/1/api.js?hl=fr" async defer></script>
+</head>
+<body>
+<p>
+    See our privacy policy <a href="../privacy">here</a>.
+</p>
+<form id="form">
+    <label for="email">Email Address: </label>
+    <input id="email" type="email" required>
+    <label for="password">Password: </label>
+    <input id="password" type="password" minlength="8" required>
+    <div class="h-captcha" data-sitekey="68ddf7fe-2356-4a56-a1d1-7c29b4de7fb9" data-callback="hcaptcha_ok"></div>
+    <input type="submit" id="submit" value="Login" disabled>
+    <label id="error"></label>
+</form>
+You don't have an account? <a href="../register">Register</a> instead.
+<script src="../argon2/argon2.js"></script>
+</body>
+</html>

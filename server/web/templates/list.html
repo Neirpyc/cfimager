@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CF Imager - Functions list</title>
+    <script src="../js/list.js"></script>
+</head>
+<body>
+
+<style>
+    td, th {
+        text-align: left;
+    }
+</style>
+
+{{$capacity := .Capacity}}
+<table style="width: 50vw">
+    <tr>
+        <th>Name</th>
+        <th>Edit</th>
+        <th>Use</th>
+        <th>Size</th>
+        <th>Delete</th>
+    </tr>
+    {{range .Functions}}
+        <tr>
+            <td>{{.Name}}</td>
+            <td><a href="../editor?name={{.Name}}&id={{.Id}}">edit</a></td>
+            <td><a href="../cfimager?id={{.Id}}">use</a></td>
+            <td>
+                <meter value="{{.Size}}" low="53000" high="60000"  optimum="53500" min="0" max="{{$capacity}}"></meter>{{.Size}}bytes
+            </td>
+            <td><a href="javascript:deleteId({{.Id}}, '{{.Name}}')">delete</a></td>
+        </tr>
+    {{end}}
+    <tr>
+        <th>Total:</th>
+        <td></td>
+        <td></td>
+        <td><meter value="{{.Total}}" min="0" low="{{0}}" optimum="{{.Low}}" high="{{.High}}" max="{{.Capacity}}"></meter>{{.Total}}bytes</td>
+        <td></td>
+    </tr>
+</table>
+
+<form id="form">
+    <label for="name">Function Name:</label>
+    <input type="text" id="name">
+    <input type="submit" id="submit" value="Create Function">
+    <label id="error"></label>
+</form>
+
+</body>
+</html>

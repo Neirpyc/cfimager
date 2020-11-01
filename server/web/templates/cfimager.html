@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>CF Imager</title>
+</head>
+<body>
+<canvas id="canvas" width="1024" height="768" oncontextmenu="event.preventDefault()"></canvas>
+<form>
+    <label for="inputRange">inputRange</label>
+    <input type="text" id="inputRange"  value="{-1+1i;1-1i}">
+    <label for="outputRange">outputRange</label>
+    <input type="text" id="outputRange" value="{-1+1i;1-1i}">
+    <label for="outputDimension">outputDimension</label>
+    <input type="text" id="outputDimension" value="1920x1080">
+    <label for="samplingFactor">samplingFactor</label>
+    <input type="number" id="samplingFactor" value="1.0" step="0.1" min="0" max="4096">
+    <label for="handleCollisions">handleCollisions</label>
+    <input type="checkbox" id="handleCollisions" checked="checked">
+</form>
+<br>
+<button id="DrawButton"> Draw();</button>
+<button id="SetSettings"> SetSettings();</button>
+<button id="Stop"> Stop();</button>
+<br>
+<textarea class="em_textarea" id="output" rows="8"></textarea>
+<img src="../img/img.jpg" id="img" style="display: none">
+<script type='text/javascript'>
+    var draw = null;
+    var set_settings = null;
+    var stop = null;
+    var inputRange, outputRange, outputDimension, samplingFactor, handleCollisions, img = null;
+    drawInterval = null;
+
+    function getImageData(img) {
+        let dummy_canvas = document.createElement('canvas');
+        dummy_canvas.width = img.width;
+        dummy_canvas.height = img.height;
+        dummy_canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
+        return dummy_canvas.getContext('2d').getImageData(0, 0, img.width, img.height).data;
+    }
+
+    function ModulePreLoad() {
+        draw = cwrap('draw', 'void', []);
+        stop = cwrap('stop_render', 'void', []);
+        set_settings = cwrap('set_render_settings', 'number', ['string', 'string', 'string', 'float', 'number', 'number', 'number', 'array']);
+        inputRange = document.getElementById("inputRange");
+        outputRange = document.getElementById("outputRange");
+        outputDimension = document.getElementById("outputDimension");
+        samplingFactor = document.getElementById("samplingFactor");
+        handleCollisions = document.getElementById("handleCollisions");
+        img = document.getElementById("img");
+        let canvas = Module.canvas;
+        let context = canvas.getContext('2d');
+        for (let x = 0; x < canvas.width; x += 8)
+            for (let y = 0; y < canvas.height; y += 8)
+            {
+                if (x / 8 % 2 == y / 8 % 2)
+                {
+                    context.fillStyle = '#444';
+                }
+                else
+                {
+                    context.fillStyle = '#333';
+                }
+                context.fillRect(x, y, 8, 8);
+            }
+        document.getElementById('DrawButton').onclick = function () {
+            draw();
+        }
+        document.getElementById('SetSettings').onclick = function () {
+            set_settings(inputRange.value, outputRange.value, outputDimension.value, samplingFactor.value,
+                handleCollisions.checked, img.width, img.height, getImageData(img));
+            if (drawInterval == null)
+                drawInterval = setInterval(draw, 1000/10);
+        }
+        document.getElementById('Stop').onclick = function () {
+            stop();
+        }
+    }
+
+    var Module = {
+        preRun: [ModulePreLoad],
+        postRun: [],
+        print: (function () {
+            var element = document.getElementById('output');
+            if (element) element.value = ''; // clear browser cache
+            return function (text) {
+                if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+                /*
+                // The printf statement in C is currently writing to a textarea.  If we wanted to instead
+                // write to an HTML tag, we would need to run these lines of codes to make our text HTML safe
+                text = text.replace(/&/g, "&amp;");
+                text = text.replace(/</g, "&lt;");
+                text = text.replace(/>/g, "&gt;");
+                text = text.replace('\n', '<br>', 'g');
+                */
+                console.log(text);
+                if (element) {
+                    element.value += text + "\n";
+                    element.scrollTop = element.scrollHeight; // focus on bottom
+                }
+
+            };
+        })(),
+        printErr: function (text) {
+            if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+            if (0) { // XXX disabled for safety typeof dump == 'function') {
+                dump(text + '\n'); // fast, straight to the real console
+            } else {
+                console.error(text);
+            }
+        },
+        canvas: (function () {
+            var canvas = document.getElementById('canvas');
+            canvas.addEventListener("webglcontextlost",
+                function (e) {
+                    alert('WebGL context lost. You will need to reload the page.');
+                    e.preventDefault();
+                },
+                false);
+            return canvas;
+        })(),
+        setStatus: function (text) {
+            if (!Module.setStatus.last) Module.setStatus.last = {time: Date.now(), text: ''};
+            if (text === Module.setStatus.last.text) return;
+            var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+            var now = Date.now();
+            if (m && now - Module.setStatus.last.time < 30) return; // if this is a progress update, skip it if too soon
+            Module.setStatus.last.time = now;
+            Module.setStatus.last.text = text;
+            if (m) {
+                text = m[1];
+            }
+            console.log("status: " + text);
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function (left) {
+            this.totalDependencies = Math.max(this.totalDependencies, left);
+            Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+        },
+    };
+    Module.setStatus('Downloading...');
+    window.onerror = function () {
+        Module.setStatus('Exception thrown, see JavaScript console');
+        Module.setStatus = function (text) {
+            if (text) Module.printErr('[post-exception status] ' + text);
+        };
+    };
+</script>
+<script async defer src="../function/{{.Id}}/cfimager.js" crossorigin="use-credentials"></script>
+</body>
+</html>

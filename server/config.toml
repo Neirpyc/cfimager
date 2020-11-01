@@ -1,0 +1,4 @@
+port = 8080
+tokenExpire = "5m"
+tokenForceExpire = "8766h"
+secure = true

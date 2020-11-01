@@ -1,0 +1,12 @@
+/server/src/server
+/mailer/mailer
+/compilerSpawner/compilerSpawner
+/compiler/compiler
+/compiler/core/flib/flib.o
+/compiler/core/cfimager.js
+/compiler/core/cfimager.wasm
+/compiler/core/cfimager.worker.js
+/compiler/core/core/process/async.o
+/compiler/core/core/process/process.o
+/compiler/core/core/image/image.o
+/compiler/core/core/conversion/conversion.o
