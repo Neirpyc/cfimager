@@ -34,25 +34,18 @@ notifications:
 before_script:
   - GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/) # All the .go files, excluding vendor/
   - go get golang.org/x/lint                        # Linter
-  - go get github.com/dominikh/go-tools                     # Badass static analyzer/linter
+  - go get honnef.co/go/tools/cmd/staticcheck       # Badass static analyzer/linter
   - go get github.com/fzipp/gocyclo
 
 # script always run to completion (set +e). All of these code checks are must haves
 # in a modern Go project.
 script:
   - test -z $(gofmt -s -l $GO_FILES)         # Fail if a .go file hasn't been formatted with gofmt
-  - go test server/src/*.go                  # Run server package tests
-  - go test server/src/auth/*.go             # Run auth package tests
-  - go test server/src/database/*.go         # Run database package tests
-  - go test server/src/forms/*.go            # Run forms package tests
-  - go test server/src/rate/*.go             # Run rate package tests
-  - go test mailer/*.go                      # Run mailer tests
-  - go test compilerSpawner/*.go             # Run compilerSpawner tests
-  - go test compiler/*.go                    # Run compiler tests
+  - go test $(go list ./...)                 # Run all tests
   - go vet ./...                             # go vet is the official Go static analyzer
   - megacheck ./...                          # "go vet on steroids" + linter
   - gocyclo -over 20 $GO_FILES               # forbid code with huge functions
-  - golint -set_exit_status $(go list ./...) # one last linter
+  - staticcheck $(go list ./...)             # one last linter
 
 # push results to CodeCov
 # after_success:
