@@ -10,7 +10,6 @@ language: go
 # are allowed to fail on Go tip.
 go:
   - 1.15.3
-  - release
   - tip
 
 # Skip the install step. Don't `go get` dependencies. Only build with the
@@ -42,14 +41,14 @@ before_script:
 # in a modern Go project.
 script:
   - test -z $(gofmt -s -l $GO_FILES)         # Fail if a .go file hasn't been formatted with gofmt
-  - go test                                  # Run server package tests
-  - go test                                  # Run auth package tests
-  - go test                                  # Run database package tests
-  - go test                                  # Run forms package tests
-  - go test                                  # Run rate package tests
-  - go test                                  # Run mailer tests
-  - go test                                  # Run compilerSpawner tests
-  - go test                                  # Run compiler tests
+  - go test server/src/*.go                  # Run server package tests
+  - go test server/src/auth/*.go             # Run auth package tests
+  - go test server/src/database/*.go         # Run database package tests
+  - go test server/src/forms/*.go            # Run forms package tests
+  - go test server/src/rate/*.go             # Run rate package tests
+  - go test mailer/*.go                      # Run mailer tests
+  - go test compilerSpawner/*.go             # Run compilerSpawner tests
+  - go test compiler/*.go                    # Run compiler tests
   - go vet ./...                             # go vet is the official Go static analyzer
   - megacheck ./...                          # "go vet on steroids" + linter
   - gocyclo -over 20 $GO_FILES               # forbid code with huge functions
