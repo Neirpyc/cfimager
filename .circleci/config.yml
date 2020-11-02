@@ -153,7 +153,7 @@ jobs:
   c-test:
     docker:
       - image: emscripten/emsdk:2.0.4
-    working_directory: /src
+    working_directory: /go/src/github.com/Neirpyc/cfimager
     steps:
       - checkout
       - run: |
@@ -165,7 +165,7 @@ jobs:
       - persist_to_workspace:
           root: "."
           paths:
-            - "compiler"
+            - "compiler/core/bin"
 
 workflows:
   version: 2
