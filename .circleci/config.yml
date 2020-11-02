@@ -48,7 +48,7 @@ commands:
           cd << parameters.path >> &&
           go build -o << parameters.package_name >>
       - persist_to_workspace:
-          root: "$CIRCLE_WORKING_DIRECTORY"
+          root: "."
           paths:
             - "<< parameters.path >>"
 
