@@ -25,7 +25,7 @@ func loginApi(w http.ResponseWriter, r *http.Request) {
 	}
 	send := func(code int, level logrus.Level, serverMsg string, resp SuccessError) {
 		w.WriteHeader(code)
-		if code != http.StatusOK || serverMsg != "" || resp.Success == false {
+		if code != http.StatusOK || serverMsg != "" || !resp.Success {
 			if err != nil {
 				L.Logf(level, "Failed to login with error \"%s\"\nErr: %s\nRequest: %+v\n", serverMsg, err.Error(), r)
 			} else {

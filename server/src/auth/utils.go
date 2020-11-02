@@ -74,7 +74,7 @@ func generateRandomData(bufferSize int) {
 	max40.Exp(big.NewInt(255), big.NewInt(40), nil)
 	empty := make([]byte, 64)
 	go func() {
-		for true {
+		for {
 			err = errors.New("")
 			for err != nil {
 				result, err = rand.Int(rand.Reader, max40)
@@ -87,7 +87,7 @@ func generateRandomData(bufferSize int) {
 		}
 	}()
 	go func() {
-		for true {
+		for {
 			err = errors.New("")
 			for err != nil {
 				result, err = rand.Int(rand.Reader, max64)

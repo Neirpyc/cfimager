@@ -122,5 +122,4 @@ func rateLimit(w http.ResponseWriter, r *http.Request, limiter rate.Limiter, key
 func rateLimitFail(w http.ResponseWriter, r *http.Request, key interface{}) {
 	logrus.Infof("Rate limit reached for key %+v on path %s", key, r.URL.Path)
 	http.Error(w, "ERR_RATE_LIMIT", http.StatusTooManyRequests)
-	return
 }

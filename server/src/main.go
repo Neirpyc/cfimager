@@ -27,7 +27,7 @@ func init() {
 func main() {
 	stop := make(chan bool, 1)
 	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, syscall.SIGTERM)
 
 	handleCommandLineArguments()
 

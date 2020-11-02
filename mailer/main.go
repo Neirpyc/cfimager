@@ -54,7 +54,6 @@ func main() {
 		}
 		w.WriteHeader(http.StatusOK)
 		fmt.Println(err)
-		return
 	})
 	http.HandleFunc("/sendPasswordResetCode", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
@@ -93,7 +92,6 @@ func main() {
 			return
 		}
 		w.WriteHeader(http.StatusOK)
-		return
 	})
 	panic(http.ListenAndServe(":8080", nil))
 }

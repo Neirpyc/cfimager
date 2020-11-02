@@ -10,10 +10,6 @@ type cfimagerContent struct {
 }
 
 func cfimager(w http.ResponseWriter, r *http.Request, auth Authentication) {
-	if auth.Success == false {
-		return
-	}
-
 	var id uint64
 	var err error
 	if id, err = strconv.ParseUint(r.URL.Query().Get("id"), 10, 64); err != nil {

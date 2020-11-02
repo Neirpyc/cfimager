@@ -59,10 +59,10 @@ func ValidateSelfEncoded(token string) (t Token, v bool) {
 		return
 	}
 	if bytes.Equal(sig.Signature, sig.Token.sign(signatureArgon2id).Signature) {
-		if sig.Token.Expire.Sub(time.Now()).Seconds() <= 0 {
+		if time.Until(sig.Token.Expire).Seconds() <= 0 {
 			return
 		}
-		if time.Now().Sub(sig.Token.Issued) >= selfEncodedTokenLifeTime {
+		if time.Since(sig.Token.Issued) >= selfEncodedTokenLifeTime {
 			return
 		}
 		if value, ok := revoked.Load(sig.Token.Id); ok {

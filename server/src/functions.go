@@ -23,7 +23,7 @@ var (
 )
 
 func init() {
-	funcNameRegex = regexp.MustCompile("^.*\\/function\\/(.*)\\/(cfimager\\.(?:worker\\.)?(?:js|wasm))$")
+	funcNameRegex = regexp.MustCompile(`^.*\\/function\\/(.*)\\/(cfimager\\.(?:worker\\.)?(?:js|wasm))$`)
 	mathrand.Seed(time.Now().Unix())
 }
 
@@ -44,9 +44,6 @@ func createFunction(w http.ResponseWriter, r *http.Request, auth Authentication)
 	var respBody []byte
 	if r.Method != http.MethodPost {
 		goto invalid
-	}
-	if auth.Success == false {
-		return
 	}
 	if err = json.NewDecoder(r.Body).Decode(&req); err != nil {
 		goto invalid
@@ -105,11 +102,6 @@ func editFunction(w http.ResponseWriter, r *http.Request, auth Authentication) {
 	var req editFunctionForm
 	if r.Method != http.MethodPost {
 		resp.Error = fmt.Sprintf("received %s request instead of %s", r.Method, http.MethodPost)
-		send(http.StatusBadRequest, logrus.InfoLevel, resp.Error, resp)
-		return
-	}
-	if auth.Success == false {
-		resp.Error = fmt.Sprintf("invalid authentication")
 		send(http.StatusBadRequest, logrus.InfoLevel, resp.Error, resp)
 		return
 	}
@@ -179,10 +171,6 @@ type FunctionEditorContent struct {
 }
 
 func functionEditor(w http.ResponseWriter, r *http.Request, auth Authentication) {
-	if auth.Success == false {
-		return
-	}
-
 	var err error
 	var id uint64
 	if id, err = strconv.ParseUint(r.URL.Query().Get("id"), 10, 64); err != nil {
@@ -208,10 +196,6 @@ func functionEditor(w http.ResponseWriter, r *http.Request, auth Authentication)
 }
 
 func functionsList(w http.ResponseWriter, r *http.Request, auth Authentication) {
-	if auth.Success == false {
-		return
-	}
-
 	var funcs database.Functions
 	var err error
 
@@ -362,7 +346,7 @@ func deleteFunc(w http.ResponseWriter, r *http.Request, auth Authentication) {
 	}
 	send := func(code int, level logrus.Level, serverMsg string, resp SuccessError) {
 		w.WriteHeader(code)
-		if code != http.StatusOK || serverMsg != "" || resp.Success == false {
+		if code != http.StatusOK || serverMsg != "" || !resp.Success {
 			if err != nil {
 				L.Logf(level, "Failed to deleteFunc with error \"%s\"\nErr: %s\nRequest: %+v\nBody: %s", serverMsg, err.Error(), r, string(body))
 			} else {

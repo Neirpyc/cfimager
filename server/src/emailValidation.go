@@ -46,7 +46,7 @@ func resendEmailValidationApi(w http.ResponseWriter, r *http.Request) {
 	}
 	send := func(code int, level logrus.Level, serverMsg string, resp SuccessError) {
 		w.WriteHeader(code)
-		if code != http.StatusOK || serverMsg != "" || resp.Success == false {
+		if code != http.StatusOK || serverMsg != "" || !resp.Success {
 			if err != nil {
 				L.Logf(level, "Failed to send email with error \"%s\"\nErr: %s\nRequest: %+v\nBody: %s", serverMsg, err.Error(), r, string(body))
 			} else {
