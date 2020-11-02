@@ -89,7 +89,7 @@ jobs:
       - test_go:
           path: server/src
       - build_go_package:
-          path: "/server/src"
+          path: "server/src"
           package_name: server
 
   go-server-build:
