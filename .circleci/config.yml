@@ -11,8 +11,12 @@ commands:
         type: string
       dockerfile:
         type: string
+      exec_path:
+        type: string
     description: "build a docker image"
     steps:
+      - attach_workspace:
+          at: /<< parameters.exec_path >>/
       - docker/build:
           tag: "<< parameters.tag >>"
           image: "<< parameters.repo >>"
@@ -90,7 +94,6 @@ jobs:
 
   go-server-build:
     executor: docker/docker
-    working_directory: /go/src/github.com/Neirpyc/cfimager
     steps:
       - setup_remote_docker
       - checkout
@@ -98,6 +101,7 @@ jobs:
           repo: neirpyc/cfimager
           tag: latest
           dockerfile: server/Dockerfile
+          exec_path: server/src/server
 
   c-test:
     docker:
