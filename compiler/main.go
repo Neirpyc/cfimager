@@ -15,7 +15,6 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 	})
 	_ = http.ListenAndServe(":8080", nil)
-	return
 }
 
 func compile(w http.ResponseWriter, r *http.Request) {
@@ -53,9 +52,9 @@ func compile(w http.ResponseWriter, r *http.Request) {
 	)
 	cmd.Stderr = errBuffer
 	if err = cmd.Run(); err != nil {
-		if _, ok := err.(*exec.ExitError); ok {
+		/*if _, ok := err.(*exec.ExitError); ok {
 			return
-		}
+		}*/
 		return
 	}
 	cmd = exec.Command(
@@ -65,9 +64,9 @@ func compile(w http.ResponseWriter, r *http.Request) {
 	)
 	cmd.Stderr = errBuffer
 	if err = cmd.Run(); err != nil {
-		if _, ok := err.(*exec.ExitError); ok {
+		/*if _, ok := err.(*exec.ExitError); ok {
 			return
-		}
+		}*/
 		return
 	}
 	var buf bytes.Buffer

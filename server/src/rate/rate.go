@@ -1,7 +1,6 @@
 package rate
 
 import (
-	"errors"
 	"fmt"
 	"reflect"
 	"sync"
@@ -53,7 +52,6 @@ func (l *limiterStock) consume() bool {
 
 type limiterStocks struct {
 	stocks []*limiterStock
-	mutex  sync.RWMutex
 }
 
 func (l *limiterStocks) update(r limiterRules) {
@@ -189,12 +187,12 @@ func LimiterGroup(limiters ...Limiter) (Limiter, error) {
 	limiterInternals := make(limiterGroup, len(limiters))
 	for i, l := range limiters {
 		if lInternal, ok := l.(limiterInternal); !ok {
-			return nil, errors.New(fmt.Sprintf(
+			return nil, fmt.Errorf(
 				"cannot use %+v of type %s as %s",
 				l,
 				reflect.TypeOf(l).String(),
-				reflect.TypeOf((*limiterInternal)(nil)).String()),
-			)
+				reflect.TypeOf((*limiterInternal)(nil)).String())
+
 		} else {
 			limiterInternals[i] = lInternal
 		}

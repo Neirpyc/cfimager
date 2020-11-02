@@ -25,7 +25,6 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 	})
 	_ = http.ListenAndServe(":8080", nil)
-	return
 }
 
 func compile(w http.ResponseWriter, r *http.Request) {
