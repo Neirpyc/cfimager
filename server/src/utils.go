@@ -22,11 +22,6 @@ type MailerRequest struct {
 	Token []byte
 }
 
-type CodeSuccessError struct {
-	Code         int
-	SuccessError SuccessError
-}
-
 func init() {
 	randData = make(chan []byte, 10)
 	go generateRandomData()
