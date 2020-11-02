@@ -18,7 +18,7 @@ jobs:
 
   c-test:
     docker:
-      - image: trzeci/emscripten:sdk-incoming-64bit
+      - image: emscripten/emsdk:2.0.4
 
     working_directory: /src/compiler/core
     steps:
