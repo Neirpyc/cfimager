@@ -165,7 +165,7 @@ jobs:
       - persist_to_workspace:
           root: "."
           paths:
-            - "compiler/core/bin"
+            - "compiler"
 
 workflows:
   version: 2
