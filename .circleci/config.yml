@@ -190,11 +190,11 @@ workflows:
 
   go-compiler:
     jobs:
-      - go-compiler-test
+     # - go-compiler-test
       - c-test
       - go-compiler-build:
           requires:
-            - go-compiler-test
+      #      - go-compiler-test
             - c-test
           context:
             - DOCKER_CREDS
