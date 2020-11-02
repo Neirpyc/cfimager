@@ -163,6 +163,8 @@ workflows:
       - go-server-build:
           requires:
             - go-server-test
+          context:
+            - DOCKER_CREDS
 
 #  test:
 #    jobs:
