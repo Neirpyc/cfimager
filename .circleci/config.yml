@@ -36,15 +36,22 @@ commands:
     parameters:
       path:
         type: string
+      package_name:
+        type: string
     description: "build a go package"
     steps:
-      - run: "cd ../<< parameters.path >> && go build)"
+      - run: |
+          cd << parameters.path >> &&
+          go build -o << parameters.package_name >>
+      - persist_to_workspace:
+          root: "<< parameters.path >>"
+          paths:
+            - "<< parameters.package_name >>"
 
 jobs:
   go-compiler-test:
     docker:
       - image: circleci/golang:1.15.3
-
     working_directory: /go/src/github.com/Neirpyc/cfimager
     steps:
       - checkout
@@ -54,7 +61,6 @@ jobs:
   go-compilerSpawner-test:
     docker:
       - image: circleci/golang:1.15.3
-
     working_directory: /go/src/github.com/Neirpyc/cfimager
     steps:
       - checkout
@@ -64,7 +70,6 @@ jobs:
   go-mailer-test:
     docker:
       - image: circleci/golang:1.15.3
-
     working_directory: /go/src/github.com/Neirpyc/cfimager
     steps:
       - checkout
@@ -74,17 +79,29 @@ jobs:
   go-server-test:
     docker:
       - image: circleci/golang:1.15.3
-
     working_directory: /go/src/github.com/Neirpyc/cfimager
     steps:
       - checkout
       - test_go:
           path: server/src
+      - build_go_package:
+          path: server/src
+          package_name: server
+
+  go-server-build:
+    docker:
+      - image: circleci/golang:1.15.3
+    working_directory: /go/src/github.com/Neirpyc/cfimager
+    steps:
+      - checkout
+      - build_image:
+          repo: neirpyc/cfimager
+          tag: latest
+          dockerfile: server/Dockerfile
 
   c-test:
     docker:
       - image: emscripten/emsdk:2.0.4
-
     working_directory: /src
     steps:
       - checkout
@@ -93,29 +110,24 @@ jobs:
           make cfimager.js &&
           make test
 
-
-
   build_go:
     docker:
       - image: circleci/golang:1.15.3
     steps:
       - setup_remote_docker
       - checkout
-
       - build_go_package:
           path: compilerSpawner
       - build_image:
           repo: neirpyc/cfimager
           tag: latest
           dockerfile: compilerSpawner/Dockerfile
-
       - build_go_package:
           path: mailer
       - build_image:
           repo: neirpyc/cfimager
           tag: latest
           dockerfile: mailer/Dockerfile
-
       - build_go_package:
           path: server
       - build_image:
@@ -126,7 +138,6 @@ jobs:
   build_c:
     docker:
       - image: emscripten/emsdk:2.0.4
-
     steps:
       - setup_remote_docker
       - checkout
@@ -138,19 +149,27 @@ jobs:
 workflows:
   version: 2
 
-  test:
+  go-server:
     jobs:
-      - go-compiler-test
-      - go-compilerSpawner-test
-      - go-mailer-test
       - go-server-test
-      - c-test
+      - go-server-build:
+          requires:
+            - go-server-test
 
-  deploy:
-    jobs:
-      - build_go:
-          context:
-            - DOCKER_CREDS
-      - build_c:
-          context:
-            - DOCKER_CREDS
+#  test:
+#    jobs:
+#      - go-compiler-test
+#      - go-compilerSpawner-test
+#      - go-mailer-test
+#      #- go-server-test
+#      - c-test
+#
+#  deploy:
+#    jobs:
+#      - build_go:
+#          context:
+#            - DOCKER_CREDS
+#      - build_c:
+#          context:
+#            - DOCKER_CREDS
+#
