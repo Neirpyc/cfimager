@@ -21,7 +21,7 @@ jobs:
       - image: trzeci/emscripten:sdk-incoming-64bit
 
     working_directory: /src
-    setps:
+    steps:
       - checkout
       - run: cd compiler/core
       - run: make cfimager
