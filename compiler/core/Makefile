@@ -30,6 +30,8 @@ re: clean all
 cleanflib:
 	$(RM) flib/flib.o
 
+test:
+
 prepare: cleanflib $(OBJS_NO_FLIB)
 
 %.o: %.c
