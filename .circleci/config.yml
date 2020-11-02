@@ -51,7 +51,7 @@ commands:
     steps:
       - run: |
           cd << parameters.path >> &&
-          go build -o << parameters.package_name >>
+          CGO_ENABLED=0 go build -o << parameters.package_name >>
       - persist_to_workspace:
           root: "."
           paths:
@@ -163,9 +163,9 @@ jobs:
           cd compiler/core &&
           make prepare
       - persist_to_workspace:
-          root: "."
+          root: ".."
           paths:
-            - "compiler/core/bin"
+            - "core/bin"
 
 workflows:
   version: 2
