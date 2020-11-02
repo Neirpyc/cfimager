@@ -17,6 +17,7 @@ commands:
     steps:
       - attach_workspace:
           at: << parameters.exec_path >>
+      - docker/check
       - docker/build:
           tag: "<< parameters.tag >>"
           image: "<< parameters.repo >>"
