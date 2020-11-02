@@ -24,7 +24,7 @@ jobs:
     steps:
       - checkout
       - run: cd compiler/core
-      - run: make cfimager
+      - run: make cfimager.js
       - run: make test
 
 workflows:
