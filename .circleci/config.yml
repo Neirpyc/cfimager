@@ -48,7 +48,7 @@ commands:
           cd << parameters.path >> &&
           go build -o << parameters.package_name >>
       - persist_to_workspace:
-          root: $(pwd)
+          root: "$(pwd)"
           paths:
             - "<< parameters.path >>"
 
