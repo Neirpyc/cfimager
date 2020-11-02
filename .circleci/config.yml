@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  docker: circleci/docker@1.0.1
+  docker: circleci/docker@1.5.0
 
 commands:
   build_image:
@@ -21,6 +21,7 @@ commands:
           tag: "<< parameters.tag >>"
           image: "<< parameters.repo >>"
           dockerfile: "<< parameters.dockerfile >>"
+          docker-context: "<< parameters.dockerfile >>"
   test_go:
     parameters:
       path:
