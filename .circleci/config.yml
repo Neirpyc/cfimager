@@ -22,6 +22,9 @@ commands:
           image: "<< parameters.repo >>"
           path: "<< parameters.path >>"
           docker-context: "<< parameters.path >>"
+      - docker/push:
+          image: "<< parameters.repo >>"
+          tag: "<< parameters.tag >>"
   test_go:
     parameters:
       path:
