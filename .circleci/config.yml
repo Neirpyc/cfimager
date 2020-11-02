@@ -21,7 +21,7 @@ commands:
           tag: "<< parameters.tag >>"
           image: "<< parameters.repo >>"
           dockerfile: "<< parameters.dockerfile >>"
-          docker-context: "<< parameters.dockerfile >>"
+          docker-context: "<< parameters.dockerfile >>/.."
   test_go:
     parameters:
       path:
