@@ -16,7 +16,7 @@ commands:
     description: "build a docker image"
     steps:
       - attach_workspace:
-          at: /<< parameters.exec_path >>/
+          at: << parameters.exec_path >>
       - docker/build:
           tag: "<< parameters.tag >>"
           image: "<< parameters.repo >>"
@@ -48,9 +48,9 @@ commands:
           cd << parameters.path >> &&
           go build -o << parameters.package_name >>
       - persist_to_workspace:
-          root: "<< parameters.path >>"
+          root: $(pwd)
           paths:
-            - "<< parameters.package_name >>"
+            - "<< parameters.path >>"
 
 jobs:
   go-compiler-test:
