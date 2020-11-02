@@ -20,12 +20,13 @@ jobs:
     docker:
       - image: emscripten/emsdk:2.0.4
 
-    working_directory: /src/compiler/core
+    working_directory: /src
     steps:
       - checkout
       - run: |
-           make cfimager.js \
-           && make test
+           cd compiler/core &&
+           make cfimager.js &&
+           make test
 
 workflows:
   version: 2
