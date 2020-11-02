@@ -9,7 +9,7 @@ commands:
         type: string
       tag:
         type: string
-      dockerfile:
+      path:
         type: string
       exec_path:
         type: string
@@ -20,8 +20,7 @@ commands:
       - docker/build:
           tag: "<< parameters.tag >>"
           image: "<< parameters.repo >>"
-          dockerfile: "<< parameters.dockerfile >>"
-          docker-context: "<< parameters.dockerfile >>/.."
+          path: "<< parameters.path >>"
   test_go:
     parameters:
       path:
@@ -101,7 +100,7 @@ jobs:
       - build_image:
           repo: neirpyc/cfimager
           tag: latest
-          dockerfile: server/Dockerfile
+          path: server
           exec_path: server/src/server
 
   c-test:
