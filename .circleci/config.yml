@@ -165,28 +165,28 @@ jobs:
       - persist_to_workspace:
           root: ".."
           paths:
-            - "core/bin"
+            - "compiler/core/bin"
 
 workflows:
   version: 2
 
-  go-server:
-    jobs:
-      - go-server-test
-      - go-server-build:
-          requires:
-            - go-server-test
-          context:
-            - DOCKER_CREDS
-
-  go-mailer:
-    jobs:
-      - go-mailer-test
-      - go-mailer-build:
-          requires:
-            - go-mailer-test
-          context:
-            - DOCKER_CREDS
+#  go-server:
+#    jobs:
+#      - go-server-test
+#      - go-server-build:
+#          requires:
+#            - go-server-test
+#          context:
+#            - DOCKER_CREDS
+#
+#  go-mailer:
+#    jobs:
+#      - go-mailer-test
+#      - go-mailer-build:
+#          requires:
+#            - go-mailer-test
+#          context:
+#            - DOCKER_CREDS
 
   go-compiler:
     jobs:
@@ -199,12 +199,13 @@ workflows:
           context:
             - DOCKER_CREDS
 
-  go-compilerSpawner:
-    jobs:
-      - go-compilerSpawner-test
-      - go-compilerSpawner-build:
-          requires:
-            - go-compilerSpawner-test
-          context:
-            - DOCKER_CREDS
-
+#  go-compilerSpawner:
+#    jobs:
+#      - go-compilerSpawner-test
+#      - go-compilerSpawner-build:
+#          requires:
+#            - go-compilerSpawner-test
+#          context:
+#            - DOCKER_CREDS
+#
+#
