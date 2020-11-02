@@ -66,6 +66,20 @@ jobs:
       - checkout
       - test_go:
           path: compiler
+      - build_go_package:
+          path: "compiler"
+          package_name: compiler
+
+  go-compiler-build:
+    executor: docker/docker
+    steps:
+      - setup_remote_docker
+      - checkout
+      - build_image:
+          repo: neirpyc/cfimager-compiler
+          tag: latest
+          path: compiler
+          exec_path: compiler/compiler
 
   go-compilerSpawner-test:
     docker:
@@ -75,6 +89,20 @@ jobs:
       - checkout
       - test_go:
           path: compilerSpawner
+      - build_go_package:
+          path: "compilerSpawner"
+          package_name: compilerSpawner
+
+  go-compilerSpawner-build:
+    executor: docker/docker
+    steps:
+      - setup_remote_docker
+      - checkout
+      - build_image:
+          repo: neirpyc/cfimager-compiler-spawner
+          tag: latest
+          path: compilerSpawner
+          exec_path: compilerSpawner/compilerSpawner
 
   go-mailer-test:
     docker:
@@ -84,6 +112,20 @@ jobs:
       - checkout
       - test_go:
           path: mailer
+      - build_go_package:
+          path: "mailer"
+          package_name: mailer
+
+  go-mailer-build:
+    executor: docker/docker
+    steps:
+      - setup_remote_docker
+      - checkout
+      - build_image:
+          repo: neirpyc/cfimager-mailer
+          tag: latest
+          path: mailer
+          exec_path: mailer/mailer
 
   go-server-test:
     docker:
@@ -103,7 +145,7 @@ jobs:
       - setup_remote_docker
       - checkout
       - build_image:
-          repo: neirpyc/cfimager
+          repo: neirpyc/cfimager-server
           tag: latest
           path: server
           exec_path: server/src/server
@@ -116,44 +158,14 @@ jobs:
       - checkout
       - run: |
           cd compiler/core &&
-          make cfimager.js &&
           make test
-
-  build_go:
-    docker:
-      - image: circleci/golang:1.15.3
-    steps:
-      - setup_remote_docker
-      - checkout
-      - build_go_package:
-          path: compilerSpawner
-      - build_image:
-          repo: neirpyc/cfimager
-          tag: latest
-          dockerfile: compilerSpawner/Dockerfile
-      - build_go_package:
-          path: mailer
-      - build_image:
-          repo: neirpyc/cfimager
-          tag: latest
-          dockerfile: mailer/Dockerfile
-      - build_go_package:
-          path: server
-      - build_image:
-          repo: neirpyc/cfimager
-          tag: latest
-          dockerfile: server/Dockerfile
-
-  build_c:
-    docker:
-      - image: emscripten/emsdk:2.0.4
-    steps:
-      - setup_remote_docker
-      - checkout
-      - build_image:
-          repo: neirpyc/cfimager
-          tag: latest
-          dockerfile: compiler/core/Dockerfile
+      - run: |
+          cd compiler/core &&
+          make prepare
+      - persist_to_workspace:
+          root: "."
+          paths:
+            - "compiler/core/bin"
 
 workflows:
   version: 2
@@ -167,20 +179,32 @@ workflows:
           context:
             - DOCKER_CREDS
 
-#  test:
-#    jobs:
-#      - go-compiler-test
-#      - go-compilerSpawner-test
-#      - go-mailer-test
-#      #- go-server-test
-#      - c-test
-#
-#  deploy:
-#    jobs:
-#      - build_go:
-#          context:
-#            - DOCKER_CREDS
-#      - build_c:
-#          context:
-#            - DOCKER_CREDS
-#
+  go-mailer:
+    jobs:
+      - go-mailer-test
+      - go-mailer-build:
+          requires:
+            - go-mailer-test
+          context:
+            - DOCKER_CREDS
+
+  go-compiler:
+    jobs:
+      - go-compiler-test
+      - c-test
+      - go-compiler-build:
+          requires:
+            - go-compiler-test
+            - c-test
+          context:
+            - DOCKER_CREDS
+
+  go-compilerSpawner:
+    jobs:
+      - go-compilerSpawner-test
+      - go-compilerSpawner-build:
+          requires:
+            - go-compilerSpawner-test
+          context:
+            - DOCKER_CREDS
+

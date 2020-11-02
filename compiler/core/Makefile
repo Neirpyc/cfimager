@@ -5,7 +5,8 @@ core/image/image.c  core/process/process.c core/process/async.c
 
 
 OBJS = $(SRC:.c=.o)
-OBJS_NO_FLIB = $(filter-out flib/flib.o, $(OBJS))
+OBJS_NO_FLIB = $(filter-out flib/flib.c, $(OBJS))
+OBJS_NO_FLIB_D = $(OBJS_NO_FLIB:.o=.d)
 
 RM = rm -f
 CC = emcc
@@ -21,6 +22,7 @@ all: $(OBJS)
 
 clean:
 	$(RM) $(OBJS)
+	$(RM) -rf bin
 
 fclean: clean
 	$(RM) $(NAME) $(NAME:.js=.wasm) $(NAME:.js=.worker.js)
@@ -32,7 +34,14 @@ cleanflib:
 
 test:
 
-prepare: cleanflib $(OBJS_NO_FLIB)
+prepare:
+	mkdir bin
+	_prepare
+
+_prepare: cleanflib $(OBJS_NO_FLIB_D)
+
+%.d: %.c
+	$(CC) $(CFLAGS) -c $< -o bin/$(notdir $(basename $@)).d
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
