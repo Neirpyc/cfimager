@@ -89,10 +89,10 @@ jobs:
           package_name: server
 
   go-server-build:
-    docker:
-      - image: circleci/golang:1.15.3
+    executor: docker/docker
     working_directory: /go/src/github.com/Neirpyc/cfimager
     steps:
+      - setup_remote_docker
       - checkout
       - build_image:
           repo: neirpyc/cfimager
