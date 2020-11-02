@@ -1,36 +1,224 @@
-version: 2
-jobs:
-  go-test:
-    docker:
-      - image: circleci/golang:1.15.3
+version: 2.1
+orbs:
+  docker: circleci/docker@1.5.0
 
-    working_directory: /go/src/github.com/Neirpyc/cfimager
+commands:
+  build_image:
+    parameters:
+      repo:
+        type: string
+      tag:
+        type: string
+      path:
+        type: string
+      exec_path:
+        type: string
+    description: "build a docker image"
+    steps:
+      - attach_workspace:
+          at: << parameters.exec_path >>
+      - docker/check
+      - docker/build:
+          tag: "<< parameters.tag >>"
+          image: "<< parameters.repo >>"
+          path: "<< parameters.path >>"
+          docker-context: "<< parameters.path >>"
+      - docker/push:
+          image: "<< parameters.repo >>"
+          tag: "<< parameters.tag >>"
+  test_go:
+    parameters:
+      path:
+        type: string
+    description: "run several test on a go package"
     steps:
       - run: go get golang.org/x/lint                        # Linter
       - run: go get honnef.co/go/tools/cmd/staticcheck       # Badass static analyzer/linter
-      - checkout
 
-      - run: GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/) # All the .go files, excluding vendor/
-      - run: test -z $(gofmt -s -l $GO_FILES)         # Fail if a .go file hasn't been formatted with gofmt
-      - run: go test $(go list ./...)                 # Run all tests
-      - run: go vet ./...                             # go vet is the official Go static analyzer
-      - run: staticcheck $(go list ./...)             # one last linter
+      - run: "GO_FILES=$(find ./<< parameters.path >> -iname '*.go' -type f | grep -v /vendor/)" # All the .go files, excluding vendor/
+
+      - run: test -z $(gofmt -s -l $GO_FILES)                     # Fail if a .go file hasn't been formatted with gofmt
+      - run: "go test $(go list ./<< parameters.path >>/...)"       # Run all tests
+      - run: "go vet ./<< parameters.path >>/..."                   # go vet is the official Go static analyzer
+      - run: "staticcheck $(go list ./<< parameters.path >>/...)"   # one last linter
+  build_go_package:
+    parameters:
+      path:
+        type: string
+      package_name:
+        type: string
+    description: "build a go package"
+    steps:
+      - run: |
+          cd << parameters.path >> &&
+          CGO_ENABLED=0 go build -o << parameters.package_name >>
+      - persist_to_workspace:
+          root: "."
+          paths:
+            - "<< parameters.path >>"
+
+jobs:
+  go-compiler-test:
+    docker:
+      - image: circleci/golang:1.15.3
+    resource_class: small
+    working_directory: /go/src/github.com/Neirpyc/cfimager
+    steps:
+      - checkout
+      - test_go:
+          path: compiler
+      - build_go_package:
+          path: "compiler"
+          package_name: compiler
+
+  go-compiler-build:
+    executor: docker/docker
+    resource_class: small
+    steps:
+      - setup_remote_docker
+      - checkout
+      - restore_cache:
+          keys:
+            - bin-{{ .Revision }}
+      - build_image:
+          repo: neirpyc/cfimager-compiler
+          tag: latest
+          path: compiler
+          exec_path: compiler/compiler
+
+  go-compilerSpawner-test:
+    docker:
+      - image: circleci/golang:1.15.3
+    resource_class: small
+    working_directory: /go/src/github.com/Neirpyc/cfimager
+    steps:
+      - checkout
+      - test_go:
+          path: compilerSpawner
+      - build_go_package:
+          path: "compilerSpawner"
+          package_name: compilerSpawner
+
+  go-compilerSpawner-build:
+    executor: docker/docker
+    resource_class: small
+    steps:
+      - setup_remote_docker
+      - checkout
+      - build_image:
+          repo: neirpyc/cfimager-compiler-spawner
+          tag: latest
+          path: compilerSpawner
+          exec_path: compilerSpawner/compilerSpawner
+
+  go-mailer-test:
+    docker:
+      - image: circleci/golang:1.15.3
+    resource_class: small
+    working_directory: /go/src/github.com/Neirpyc/cfimager
+    steps:
+      - checkout
+      - test_go:
+          path: mailer
+      - build_go_package:
+          path: "mailer"
+          package_name: mailer
+
+  go-mailer-build:
+    executor: docker/docker
+    steps:
+      - setup_remote_docker
+      - checkout
+      - build_image:
+          repo: neirpyc/cfimager-mailer
+          tag: latest
+          path: mailer
+          exec_path: mailer/mailer
+
+  go-server-test:
+    docker:
+      - image: circleci/golang:1.15.3
+    resource_class: small
+    working_directory: /go/src/github.com/Neirpyc/cfimager
+    steps:
+      - checkout
+      - test_go:
+          path: server/src
+      - build_go_package:
+          path: "server/src"
+          package_name: server
+
+  go-server-build:
+    executor: docker/docker
+    resource_class: small
+    steps:
+      - setup_remote_docker
+      - checkout
+      - build_image:
+          repo: neirpyc/cfimager-server
+          tag: latest
+          path: server
+          exec_path: server/src/server
 
   c-test:
     docker:
       - image: emscripten/emsdk:2.0.4
-
-    working_directory: /src
+    resource_class: small
+    working_directory: /
     steps:
-      - checkout
+      - run: mkdir /home/circleci
+      - run: mkdir /home/circleci/project
+      - checkout:
+          path: "home/circleci/project"
       - run: |
-           cd compiler/core &&
-           make cfimager.js &&
-           make test
+          cd /home/circleci/project/compiler/core &&
+          make test
+      - run: |
+          cd /home/circleci/project/compiler/core &&
+          make prepare
+      - save_cache:
+          key: bin-{{ .Revision }}
+          paths:
+            - "/home/circleci/project/compiler/core/bin"
 
 workflows:
   version: 2
-  test:
+
+  go-server:
     jobs:
-      - go-test
+      - go-server-test
+      - go-server-build:
+          requires:
+            - go-server-test
+          context:
+            - DOCKER_CREDS
+
+  go-mailer:
+    jobs:
+      - go-mailer-test
+      - go-mailer-build:
+          requires:
+            - go-mailer-test
+          context:
+            - DOCKER_CREDS
+
+  go-compiler:
+    jobs:
+      - go-compiler-test
       - c-test
+      - go-compiler-build:
+          requires:
+            - go-compiler-test
+            - c-test
+          context:
+            - DOCKER_CREDS
+
+  go-compilerSpawner:
+    jobs:
+      - go-compilerSpawner-test
+      - go-compilerSpawner-build:
+          requires:
+            - go-compilerSpawner-test
+          context:
+            - DOCKER_CREDS
+

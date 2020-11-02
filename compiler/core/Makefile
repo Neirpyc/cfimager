@@ -5,10 +5,13 @@ core/image/image.c  core/process/process.c core/process/async.c
 
 
 OBJS = $(SRC:.c=.o)
-OBJS_NO_FLIB = $(filter-out flib/flib.o, $(OBJS))
+OBJS_NO_FLIB = $(filter-out flib/flib.c, $(OBJS))
+OBJS_NO_FLIB_D = $(OBJS_NO_FLIB:.o=.d)
 
 RM = rm -f
 CC = emcc
+MAKE = make
+MKDIR = mkdir -p
 CFLAGS = -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap", "ccall"]' -s USE_PTHREADS=1 \
 -s EXPORTED_FUNCTIONS='["_main", "_draw", "_stop_render", "_set_render_settings"]' -O3 -s EXPORT_ALL=0 \
 -s ALLOW_MEMORY_GROWTH=1 -s ASSERTIONS=1
@@ -21,6 +24,7 @@ all: $(OBJS)
 
 clean:
 	$(RM) $(OBJS)
+	$(RM) -rf bin
 
 fclean: clean
 	$(RM) $(NAME) $(NAME:.js=.wasm) $(NAME:.js=.worker.js)
@@ -32,7 +36,15 @@ cleanflib:
 
 test:
 
-prepare: cleanflib $(OBJS_NO_FLIB)
+prepare:
+	$(MKDIR) bin
+	$(MAKE) _prepare
+
+_prepare: cleanflib $(OBJS_NO_FLIB_D)
+
+%.d: %.c
+	$(CC) $(CFLAGS) -c $< -o bin/$(notdir $(basename $@)).o
+	$(RM) $@
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
