@@ -20,12 +20,11 @@ jobs:
     docker:
       - image: trzeci/emscripten:sdk-incoming-64bit
 
-    working_directory: /src
+    working_directory: /src/compiler/core
     steps:
       - checkout
       - run: |
-           cd compiler/core \
-           && make cfimager.js \
+           make cfimager.js \
            && make test
 
 workflows:
