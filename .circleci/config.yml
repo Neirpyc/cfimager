@@ -1,0 +1,32 @@
+version: 2
+jobs:
+  go-test:
+    docker:
+      - image: circleci/golang:1.15.3
+
+    working_directory: /go/src/github.com/Neirpyc/cfimager
+    steps:
+      - run: go get golang.org/x/lint                        # Linter
+      - run: go get honnef.co/go/tools/cmd/staticcheck       # Badass static analyzer/linter
+      - checkout
+
+      - run: GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/) # All the .go files, excluding vendor/
+      - run: test -z $(gofmt -s -l $GO_FILES)         # Fail if a .go file hasn't been formatted with gofmt
+      - run: go test $(go list ./...)                 # Run all tests
+      - run: go vet ./...                             # go vet is the official Go static analyzer
+      - run: staticcheck $(go list ./...)             # one last linter
+
+  c-test:
+    docker:
+      - image: trzeci/emscripten:sdk-incoming-64bit
+
+    working_directory: /src
+    setps:
+      - checkout
+      - run: cd compiler/core
+      - run: make cfimager
+      - run: make test
+
+
+
+
