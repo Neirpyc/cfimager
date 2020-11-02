@@ -163,9 +163,9 @@ jobs:
           cd compiler/core &&
           make prepare
       - persist_to_workspace:
-          root: ".."
+          root: "."
           paths:
-            - "compiler/core/bin"
+            - "core/bin"
 
 workflows:
   version: 2
