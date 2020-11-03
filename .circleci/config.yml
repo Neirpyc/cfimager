@@ -75,7 +75,6 @@ jobs:
     steps:
       - setup_remote_docker
       - checkout
-      - run: cp -R /tmp/compiler/core/bin compiler/core/
       - build_image:
           repo: neirpyc/cfimager-compiler
           tag: latest
@@ -164,7 +163,7 @@ jobs:
           cd compiler/core &&
           make prepare
       - persist_to_workspace:
-          root: "/tmp"
+          root: "/"
           paths:
             - "compiler/core/bin"
 
