@@ -61,6 +61,7 @@ jobs:
   go-compiler-test:
     docker:
       - image: circleci/golang:1.15.3
+    resource_class: small
     working_directory: /go/src/github.com/Neirpyc/cfimager
     steps:
       - checkout
@@ -72,6 +73,7 @@ jobs:
 
   go-compiler-build:
     executor: docker/docker
+    resource_class: small
     steps:
       - setup_remote_docker
       - checkout
@@ -87,6 +89,7 @@ jobs:
   go-compilerSpawner-test:
     docker:
       - image: circleci/golang:1.15.3
+    resource_class: small
     working_directory: /go/src/github.com/Neirpyc/cfimager
     steps:
       - checkout
@@ -98,6 +101,7 @@ jobs:
 
   go-compilerSpawner-build:
     executor: docker/docker
+    resource_class: small
     steps:
       - setup_remote_docker
       - checkout
@@ -110,6 +114,7 @@ jobs:
   go-mailer-test:
     docker:
       - image: circleci/golang:1.15.3
+    resource_class: small
     working_directory: /go/src/github.com/Neirpyc/cfimager
     steps:
       - checkout
@@ -133,6 +138,7 @@ jobs:
   go-server-test:
     docker:
       - image: circleci/golang:1.15.3
+    resource_class: small
     working_directory: /go/src/github.com/Neirpyc/cfimager
     steps:
       - checkout
@@ -144,6 +150,7 @@ jobs:
 
   go-server-build:
     executor: docker/docker
+    resource_class: small
     steps:
       - setup_remote_docker
       - checkout
@@ -161,7 +168,7 @@ jobs:
     steps:
       - run: mkdir /home/circleci
       - run: mkdir /home/circleci/project
-      - checkout :
+      - checkout:
           path: "home/circleci/project"
       - run: |
           cd /home/circleci/project/compiler/core &&
@@ -177,23 +184,23 @@ jobs:
 workflows:
   version: 2
 
-  #  go-server:
-  #    jobs:
-  #      - go-server-test
-  #      - go-server-build:
-  #          requires:
-  #            - go-server-test
-  #          context:
-  #            - DOCKER_CREDS
-  #
-  #  go-mailer:
-  #    jobs:
-  #      - go-mailer-test
-  #      - go-mailer-build:
-  #          requires:
-  #            - go-mailer-test
-  #          context:
-  #            - DOCKER_CREDS
+  go-server:
+    jobs:
+      - go-server-test
+      - go-server-build:
+          requires:
+            - go-server-test
+          context:
+            - DOCKER_CREDS
+
+  go-mailer:
+    jobs:
+      - go-mailer-test
+      - go-mailer-build:
+          requires:
+            - go-mailer-test
+          context:
+            - DOCKER_CREDS
 
   go-compiler:
     jobs:
@@ -206,13 +213,12 @@ workflows:
           context:
             - DOCKER_CREDS
 
-#  go-compilerSpawner:
-#    jobs:
-#      - go-compilerSpawner-test
-#      - go-compilerSpawner-build:
-#          requires:
-#            - go-compilerSpawner-test
-#          context:
-#            - DOCKER_CREDS
-#
-#
+  go-compilerSpawner:
+    jobs:
+      - go-compilerSpawner-test
+      - go-compilerSpawner-build:
+          requires:
+            - go-compilerSpawner-test
+          context:
+            - DOCKER_CREDS
+
