@@ -77,7 +77,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - bin
+            - bin-{{ .BuildNum }}
       - build_image:
           repo: neirpyc/cfimager-compiler
           tag: latest
@@ -169,7 +169,7 @@ jobs:
           cd /home/circleci/project/compiler/core &&
           make prepare
       - save_cache:
-          key: "bin"
+          key: bin-{{ .BuildNum }}
           paths:
             - "/home/circleci/project/compiler/core/bin"
 
