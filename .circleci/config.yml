@@ -156,19 +156,21 @@ jobs:
   c-test:
     docker:
       - image: emscripten/emsdk:2.0.4
-    working_directory: /home/circleci/
+    working_directory: /
     steps:
-      - checkout
+      - run: mkdir /home/circleci
+      - checkout :
+          path: "home/circleci"
       - run: |
-          cd compiler/core &&
+          cd /home/circleci/project/compiler/core &&
           make test
       - run: |
-          cd compiler/core &&
+          cd /home/circleci/project/compiler/core &&
           make prepare
       - save_cache:
           key: "bin"
           paths:
-            - "compiler/core/bin"
+            - "/home/circleci/project/compiler/core/bin"
 
 workflows:
   version: 2
