@@ -72,7 +72,6 @@ jobs:
 
   go-compiler-build:
     executor: docker/docker
-    working_directory: /root
     steps:
       - setup_remote_docker
       - checkout
@@ -157,6 +156,7 @@ jobs:
   c-test:
     docker:
       - image: emscripten/emsdk:2.0.4
+    working_directory: /home/circleci/
     steps:
       - checkout
       - run: |
