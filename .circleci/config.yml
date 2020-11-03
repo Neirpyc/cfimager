@@ -61,7 +61,6 @@ jobs:
   go-compiler-test:
     docker:
       - image: circleci/golang:1.15.3
-    working_directory: /go/src/github.com/Neirpyc/cfimager
     steps:
       - checkout
       - test_go:
@@ -72,7 +71,6 @@ jobs:
 
   go-compiler-build:
     executor: docker/docker
-    working_directory: /go/src/github.com/Neirpyc/cfimager
     steps:
       - setup_remote_docker
       - checkout
@@ -157,7 +155,6 @@ jobs:
   c-test:
     docker:
       - image: emscripten/emsdk:2.0.4
-    working_directory: /go/src/github.com/Neirpyc/cfimager
     steps:
       - checkout
       - run: |
