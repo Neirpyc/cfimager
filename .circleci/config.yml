@@ -153,7 +153,6 @@ jobs:
   c-test:
     docker:
       - image: emscripten/emsdk:2.0.4
-    working_directory: /go/src/github.com/Neirpyc/cfimager
     steps:
       - checkout
       - run: |
