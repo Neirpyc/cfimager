@@ -165,9 +165,9 @@ jobs:
           make prepare
       - run: pwd
       - persist_to_workspace:
-          root: "~/"
+          root: "/root/project"
           paths:
-            - "project/compiler/core/bin"
+            - "compiler/core/bin"
 
 workflows:
   version: 2
