@@ -163,7 +163,7 @@ jobs:
           cd compiler/core &&
           make prepare
       - persist_to_workspace:
-          root: "."
+          root: "~/project"
           paths:
             - "compiler/core/bin"
 
