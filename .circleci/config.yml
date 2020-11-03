@@ -159,8 +159,9 @@ jobs:
     working_directory: /
     steps:
       - run: mkdir /home/circleci
+      - run: mkdir /home/circleci/project
       - checkout :
-          path: "home/circleci"
+          path: "home/circleci/project"
       - run: |
           cd /home/circleci/project/compiler/core &&
           make test
