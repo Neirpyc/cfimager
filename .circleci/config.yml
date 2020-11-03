@@ -156,6 +156,7 @@ jobs:
   c-test:
     docker:
       - image: emscripten/emsdk:2.0.4
+    resource_class: small
     working_directory: /
     steps:
       - run: mkdir /home/circleci
