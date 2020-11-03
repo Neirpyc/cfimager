@@ -155,12 +155,15 @@ jobs:
       - image: emscripten/emsdk:2.0.4
     steps:
       - checkout
+      - run: pwd
       - run: |
           cd compiler/core &&
           make test
+      - run: pwd
       - run: |
           cd compiler/core &&
           make prepare
+      - run: pwd
       - persist_to_workspace:
           root: "~/"
           paths:
@@ -169,31 +172,31 @@ jobs:
 workflows:
   version: 2
 
-#  go-server:
-#    jobs:
-#      - go-server-test
-#      - go-server-build:
-#          requires:
-#            - go-server-test
-#          context:
-#            - DOCKER_CREDS
-#
-#  go-mailer:
-#    jobs:
-#      - go-mailer-test
-#      - go-mailer-build:
-#          requires:
-#            - go-mailer-test
-#          context:
-#            - DOCKER_CREDS
+  #  go-server:
+  #    jobs:
+  #      - go-server-test
+  #      - go-server-build:
+  #          requires:
+  #            - go-server-test
+  #          context:
+  #            - DOCKER_CREDS
+  #
+  #  go-mailer:
+  #    jobs:
+  #      - go-mailer-test
+  #      - go-mailer-build:
+  #          requires:
+  #            - go-mailer-test
+  #          context:
+  #            - DOCKER_CREDS
 
   go-compiler:
     jobs:
-     # - go-compiler-test
+      # - go-compiler-test
       - c-test
       - go-compiler-build:
           requires:
-      #      - go-compiler-test
+            #      - go-compiler-test
             - c-test
           context:
             - DOCKER_CREDS
