@@ -13,10 +13,13 @@ commands:
         type: string
       exec_path:
         type: string
+      package_name:
+        type: string
     description: "build a docker image"
     steps:
-      - attach_workspace:
-          at: << parameters.exec_path >>
+      - restore_cache:
+          keys:
+            - << parameters.package_name >>-{{ .Revision }}
       - docker/check
       - docker/build:
           tag: "<< parameters.tag >>"
@@ -52,10 +55,10 @@ commands:
       - run: |
           cd << parameters.path >> &&
           CGO_ENABLED=0 go build -o << parameters.package_name >>
-      - persist_to_workspace:
-          root: "."
+      - save_cache:
+          key: << parameters.package_name >>-{{ .Revision }}
           paths:
-            - "<< parameters.path >>"
+            - << parameters.path >>/<< parameters.package_name >>
 
 jobs:
   go-compiler-test:
@@ -159,6 +162,7 @@ jobs:
           tag: latest
           path: server
           exec_path: server/src/server
+          package_name: server
 
   c-test:
     docker:
@@ -193,32 +197,31 @@ workflows:
           context:
             - DOCKER_CREDS
 
-  go-mailer:
-    jobs:
-      - go-mailer-test
-      - go-mailer-build:
-          requires:
-            - go-mailer-test
-          context:
-            - DOCKER_CREDS
-
-  go-compiler:
-    jobs:
-      - go-compiler-test
-      - c-test
-      - go-compiler-build:
-          requires:
-            - go-compiler-test
-            - c-test
-          context:
-            - DOCKER_CREDS
-
-  go-compilerSpawner:
-    jobs:
-      - go-compilerSpawner-test
-      - go-compilerSpawner-build:
-          requires:
-            - go-compilerSpawner-test
-          context:
-            - DOCKER_CREDS
-
+#  go-mailer:
+#    jobs:
+#      - go-mailer-test
+#      - go-mailer-build:
+#          requires:
+#            - go-mailer-test
+#          context:
+#            - DOCKER_CREDS
+#
+#  go-compiler:
+#    jobs:
+#      - go-compiler-test
+#      - c-test
+#      - go-compiler-build:
+#          requires:
+#            - go-compiler-test
+#            - c-test
+#          context:
+#            - DOCKER_CREDS
+#
+#  go-compilerSpawner:
+#    jobs:
+#      - go-compilerSpawner-test
+#      - go-compilerSpawner-build:
+#          requires:
+#            - go-compilerSpawner-test
+#          context:
+#            - DOCKER_CREDS
