@@ -64,7 +64,7 @@ func compile(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	pingUrl := fmt.Sprintf("http://%s:8080/ping", cName)
-	stop := time.After(5 * time.Second)
+	stop := time.After(10 * time.Second)
 	for {
 		if resp, err := http.Get(pingUrl); err == nil {
 			if resp.StatusCode == http.StatusOK {
@@ -80,7 +80,7 @@ func compile(w http.ResponseWriter, r *http.Request) {
 		time.Sleep(1 * time.Millisecond)
 	}
 
-	client := http.Client{Timeout: 20 * time.Second}
+	client := http.Client{Timeout: 60 * time.Second}
 	var resp *http.Response
 	if resp, err = client.Post(fmt.Sprintf("http://%s:8080/compile", cName), "", r.Body); err != nil {
 		if os.IsTimeout(err) {

@@ -63,7 +63,7 @@ document.getElementById("form").addEventListener("submit", async function (event
         obj['content'] = newContent;
     }
 
-    errorLabel.innerHTML = "Compiling... This can take up to 20seconds";
+    errorLabel.innerHTML = "Compiling... This can take up to a minute";
     fetch('../v1/editFunction', {
         method: 'POST',
         body: JSON.stringify(obj)

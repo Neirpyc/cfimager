@@ -86,6 +86,7 @@ func editFunction(w http.ResponseWriter, r *http.Request, auth Authentication) {
 		L.Warn("Could not decode edit function request body.")
 	}
 	send := func(code int, level logrus.Level, serverMsg string, resp EditFunctionResponse) {
+		w.WriteHeader(code)
 		if code != http.StatusOK || serverMsg != "" {
 			if err != nil {
 				L.Logf(level, "Failed to edit function with error \"%s\"\nErr: %s\nRequest: %+v\nBody: %s", serverMsg, err.Error(), r, string(body))
@@ -96,7 +97,6 @@ func editFunction(w http.ResponseWriter, r *http.Request, auth Authentication) {
 		if err := json.NewEncoder(w).Encode(resp); err != nil {
 			L.Warn("Could not write response in edit function.")
 		}
-		w.WriteHeader(code)
 	}
 	var resp EditFunctionResponse
 	var req editFunctionForm
