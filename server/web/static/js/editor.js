@@ -76,7 +76,8 @@ document.getElementById("form").addEventListener("submit", async function (event
                 content.value = data['content'] != undefined ? data['content'] : content.value;
                 funcName = data['name'] != undefined ? data['name'] : name.value;
             } else {
-                errorArea.innerHTML = ";"
+                errorArea.innerHTML = "Success"
+                errorLabel.innerHTML = "Success";
             }
             if (name.value != funcName) {
                 name.value = funcName;
