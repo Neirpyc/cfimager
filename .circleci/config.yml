@@ -143,8 +143,9 @@ jobs:
       - image: circleci/golang:1.15.3
     resource_class: small
     working_directory: /home/circleci
-    steps:
-      - checkout
+      steps:
+          - checkout:
+            path: "home/circleci/project"
       - test_go:
           path: server/src
       - build_go_package:
