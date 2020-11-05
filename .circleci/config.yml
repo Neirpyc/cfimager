@@ -142,7 +142,7 @@ jobs:
     docker:
       - image: circleci/golang:1.15.3
     resource_class: small
-    working_directory: /home/circleci
+    working_directory: /home/circleci/project
     steps:
       - checkout
       - test_go:
