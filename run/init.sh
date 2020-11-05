@@ -1,12 +1,18 @@
 source secrets.txt
 
-BUILD_CONTAINER_ID="2b0bd23a5f1c"
+BUILD_CONTAINER_ID="neirpyc/cfimager-compiler"
 
 docker network create --driver bridge cfimager-database
 docker network create --driver bridge cfimager-compilers-api
 docker network create --driver bridge cfimager-compilers
 docker network create --driver bridge cfimager-mailer-api
 docker network create --driver bridge cfimager-mailer
+
+docker pull neirpyc/cfimager-compiler:latest
+docker pull neirpyc/cfimager-compiler-spawner:latest
+docker pull neirpyc/cfimager-mailer:latest
+docker pull neirpyc/cfimager-server:latest
+
 
 docker create --name cfimager-mariadb -e MYSQL_ROOT_PASSWORD="$PASSWORD" \
 -v /opt/mariadb/data:/var/lib/mysql --network cfimager-database mariadb:10.5
@@ -18,7 +24,7 @@ docker create --name cfimager-compilers-spawner -e BUILD_CONTAINER_ID=$BUILD_CON
 neirpyc/cfimager-compiler-spawner:latest
 
 docker create --name cfimager-mailer -e "ALLOWED_SENDER_DOMAINS=cfimager.neirpyc.ovh" \
-  --network cfimager-mailer -p 1587:587 boky/postfix
+  --network cfimager-mailer -p 1587:587 boky/postfix:latest
 
 docker create --name cfimager-mailer-api --network cfimager-mailer-api \
  --cap-drop ALL\

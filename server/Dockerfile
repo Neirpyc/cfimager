@@ -11,6 +11,7 @@ WORKDIR /cfimager_server
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY ./web ./web
 COPY config.toml .
+COPY src/src server
 
 EXPOSE 80/tcp
 
