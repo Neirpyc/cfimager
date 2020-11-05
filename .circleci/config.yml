@@ -187,11 +187,26 @@ jobs:
           key: bin-{{ .Revision }}
           paths:
             - "/home/circleci/project/compiler/core/bin"
+  deploy:
+    docker:
+      - image: cimg/base:2020.01
+    resource_class: small
+    steps:
+      - checkout
+      - run: |
+          touch private_key &&
+          chmod 0600 private_key &&
+          echo "$SSH_PRIVATE" | base64 --decode > private_key
+      - run: |
+          echo "./build.sh & disown -h %1 && logout" |
+          ssh -tt -o "StrictHostKeyChecking=no" circleci@neirpyc.ovh -p 4242 -i private_key
+
+
 
 workflows:
   version: 2
 
-  go-server:
+  test-and-build:
     jobs:
       - go-server-test
       - go-server-build:
@@ -199,18 +214,12 @@ workflows:
             - go-server-test
           context:
             - DOCKER_CREDS
-
-  go-mailer:
-    jobs:
       - go-mailer-test
       - go-mailer-build:
           requires:
             - go-mailer-test
           context:
             - DOCKER_CREDS
-
-  go-compiler:
-    jobs:
       - go-compiler-test
       - c-test
       - go-compiler-build:
@@ -219,12 +228,21 @@ workflows:
             - c-test
           context:
             - DOCKER_CREDS
-
-  go-compilerSpawner:
-    jobs:
       - go-compilerSpawner-test
       - go-compilerSpawner-build:
           requires:
             - go-compilerSpawner-test
           context:
             - DOCKER_CREDS
+      - deploy-hold:
+          type: approval
+          requires:
+            - go-compilerSpawner-build
+            - go-compiler-build
+            - go-mailer-build
+            - go-server-build
+      - deploy:
+          requires:
+            - deploy-hold
+          context:
+            - DEPLOY_SSH
