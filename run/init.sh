@@ -36,7 +36,7 @@ docker create --name cfimager-server -p 127.0.0.1:8042:8070 \
  --cap-drop ALL --network cfimager-database\
  --memory=400m --memory-swap=500m --kernel-memory=75m --cpus=3 --cpu-shares=2048 \
  -e HCAPTCHA_SECRET="$HCAPTCHA_SECRET" -e HCAPTCHA_PUBLIC="$HCAPTCHA_PUBLIC" \
-neirpyc/cfimager-server:latest
+ neirpyc/cfimager-server:latest
 
 docker network connect cfimager-compilers-api cfimager-server
 docker network connect cfimager-compilers cfimager-compilers-spawner
