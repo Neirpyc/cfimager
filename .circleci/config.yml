@@ -65,7 +65,7 @@ jobs:
     docker:
       - image: circleci/golang:1.15.3
     resource_class: small
-    working_directory: /go/src/github.com/Neirpyc/cfimager
+    working_directory: /home/circleci/project
     steps:
       - checkout
       - test_go:
@@ -88,12 +88,13 @@ jobs:
           tag: latest
           path: compiler
           exec_path: compiler/compiler
+          package_name: compiler
 
   go-compilerSpawner-test:
     docker:
       - image: circleci/golang:1.15.3
     resource_class: small
-    working_directory: /go/src/github.com/Neirpyc/cfimager
+    working_directory: /home/circleci/project
     steps:
       - checkout
       - test_go:
@@ -113,12 +114,13 @@ jobs:
           tag: latest
           path: compilerSpawner
           exec_path: compilerSpawner/compilerSpawner
+          package_name: compilerSpawner
 
   go-mailer-test:
     docker:
       - image: circleci/golang:1.15.3
     resource_class: small
-    working_directory: /go/src/github.com/Neirpyc/cfimager
+    working_directory: /home/circleci/project
     steps:
       - checkout
       - test_go:
@@ -137,6 +139,7 @@ jobs:
           tag: latest
           path: mailer
           exec_path: mailer/mailer
+          package_name: mailer
 
   go-server-test:
     docker:
@@ -197,31 +200,31 @@ workflows:
           context:
             - DOCKER_CREDS
 
-#  go-mailer:
-#    jobs:
-#      - go-mailer-test
-#      - go-mailer-build:
-#          requires:
-#            - go-mailer-test
-#          context:
-#            - DOCKER_CREDS
-#
-#  go-compiler:
-#    jobs:
-#      - go-compiler-test
-#      - c-test
-#      - go-compiler-build:
-#          requires:
-#            - go-compiler-test
-#            - c-test
-#          context:
-#            - DOCKER_CREDS
-#
-#  go-compilerSpawner:
-#    jobs:
-#      - go-compilerSpawner-test
-#      - go-compilerSpawner-build:
-#          requires:
-#            - go-compilerSpawner-test
-#          context:
-#            - DOCKER_CREDS
+  go-mailer:
+    jobs:
+      - go-mailer-test
+      - go-mailer-build:
+          requires:
+            - go-mailer-test
+          context:
+            - DOCKER_CREDS
+
+  go-compiler:
+    jobs:
+      - go-compiler-test
+      - c-test
+      - go-compiler-build:
+          requires:
+            - go-compiler-test
+            - c-test
+          context:
+            - DOCKER_CREDS
+
+  go-compilerSpawner:
+    jobs:
+      - go-compilerSpawner-test
+      - go-compilerSpawner-build:
+          requires:
+            - go-compilerSpawner-test
+          context:
+            - DOCKER_CREDS
