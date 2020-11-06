@@ -9,10 +9,11 @@
 <body>
 <form id="form">
     <label for="name">Name</label>
-    <input type="text" id="name" value="{{.FunctionName}}">
-    <label for="code">Function</label>
-    <textarea id="code">{{.FunctionCode}}</textarea>
-    <textarea id="errorArea">{{.FunctionError}}</textarea>
+    <input type="text" id="name" value="{{.FunctionName}}"><br>
+    <label for="code">Function source code</label>
+    <textarea id="code">{{.FunctionCode}}</textarea><br>
+    <label for="errorArea">Compilation output</label>
+    <textarea id="errorArea">{{.FunctionError}}</textarea><br>
     <div class="h-captcha" data-sitekey="{{sitekey}}" data-callback="hcaptcha_ok"></div>
     <input type="submit" value="Save" id="submit" disabled>
     <label id="error"></label>
