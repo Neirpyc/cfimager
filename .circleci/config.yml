@@ -131,6 +131,7 @@ jobs:
 
   go-mailer-build:
     executor: docker/docker
+    resource_class: small
     steps:
       - setup_remote_docker
       - checkout
