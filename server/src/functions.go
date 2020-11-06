@@ -18,6 +18,18 @@ import (
 	"time"
 )
 
+const emptyFunction = `#include <complex.h> // get library to do complex number computation
+// see https://www.gnu.org/software/libc/manual/html_node/Complex-Numbers.html for documentation
+
+// f is the function we will draw
+// it takes a complex number c as input : the origin point
+// it must return a complex number: the destination point
+complex double f(complex double c)
+{ // edit below
+    return c; // return the same position, unchanged
+}
+`
+
 var (
 	funcNameRegex *regexp.Regexp
 )
@@ -52,6 +64,8 @@ func createFunction(w http.ResponseWriter, r *http.Request, auth Authentication)
 	if id, err = DB.NewFunction(auth.Id, req.Name); err != nil {
 		goto invalid
 	}
+
+	_ = DB.SetSource(auth.Id, id, emptyFunction)
 
 	resp.Success = true
 	resp.Error = strconv.FormatUint(id, 10)
