@@ -150,27 +150,29 @@ func editFunction(w http.ResponseWriter, r *http.Request, auth Authentication) {
 		}
 	}
 
-	var data []byte
-	if data, err = compileFunction(auth.Id, req.Id); err != nil {
-		if err.Error() == compilationError().Error() {
-			resp.Error = "compilation failed"
-			resp.Message = string(data)
-			send(http.StatusOK, logrus.InfoLevel, resp.Error, resp)
-			return
-		} else if err.Error() == "ERR_TIMEOUT" {
-			resp.Error = err.Error()
-			resp.Message = "compilation timeout"
-			send(http.StatusOK, logrus.InfoLevel, resp.Error, resp)
-			return
-		} else if err.Error() == "ERR_NOT_ENOUGH_SPACE" {
-			resp.Error = err.Error()
-			resp.Message = "You have reached the maximum size you can store on our server"
-			send(http.StatusOK, logrus.InfoLevel, resp.Error, resp)
-			return
-		} else {
-			resp.Error = "could not compile function"
-			send(http.StatusInternalServerError, logrus.ErrorLevel, resp.Error, resp)
-			return
+	if req.ContentModified {
+		var data []byte
+		if data, err = compileFunction(auth.Id, req.Id); err != nil {
+			if err.Error() == compilationError().Error() {
+				resp.Error = "compilation failed"
+				resp.Message = string(data)
+				send(http.StatusOK, logrus.InfoLevel, resp.Error, resp)
+				return
+			} else if err.Error() == "ERR_TIMEOUT" {
+				resp.Error = err.Error()
+				resp.Message = "compilation timeout"
+				send(http.StatusOK, logrus.InfoLevel, resp.Error, resp)
+				return
+			} else if err.Error() == "ERR_NOT_ENOUGH_SPACE" {
+				resp.Error = err.Error()
+				resp.Message = "You have reached the maximum size you can store on our server"
+				send(http.StatusOK, logrus.InfoLevel, resp.Error, resp)
+				return
+			} else {
+				resp.Error = "could not compile function"
+				send(http.StatusInternalServerError, logrus.ErrorLevel, resp.Error, resp)
+				return
+			}
 		}
 	}
 
