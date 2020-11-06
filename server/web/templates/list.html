@@ -26,7 +26,7 @@
         <tr>
             <td>{{.Name}}</td>
             <td><a href="../editor?name={{.Name}}&id={{.Id}}">edit</a></td>
-            <td><a href="../cfimager?id={{.Id}}">use</a></td>
+            <td><a href="../cfimager?id={{.Id}}">use (draw)</a></td>
             <td>
                 <meter value="{{.Size}}" low="53000" high="60000"  optimum="53500" min="0" max="{{$capacity}}"></meter>{{.Size}}bytes
             </td>
@@ -42,9 +42,9 @@
     </tr>
 </table>
 
-<form id="form">
+<form id="form" style="border: 2px solid; width: min-content; margin: 1%; padding: 1%">
     <label for="name">Function Name:</label>
-    <input type="text" id="name">
+    <input type="text" id="name"><br>
     <input type="submit" id="submit" value="Create Function">
     <label id="error"></label>
 </form>
