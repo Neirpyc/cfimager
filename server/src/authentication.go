@@ -40,14 +40,13 @@ func authenticate(w http.ResponseWriter, r *http.Request, callback authHandler) 
 
 	var token auth.Token
 	if token, authentication.Success = auth.ValidateSelfEncoded(elems[0]); authentication.Success {
+		if str, ok := token.Metadata.(string); !ok || str != "auth" {
+			return
+		}
 		authentication.Id = token.Id
 		authentication.Success = true
 		return
 	}
-	if str, ok := token.Metadata.(string); !ok || str != "auth" {
-		return
-	}
-	authentication.Id = token.Id
 
 	var dbToken []byte
 	if authentication.Id, authentication.Success, dbToken = auth.ValidateRefreshToken(elems[1]); authentication.Success {
